@@ -1,59 +1,63 @@
-const e = require("express");
+const express = require("express");
 const redis = require("redis");
+
+const app = express();
 const client = redis.createClient();
 
-client.on("error", error => {
+client.on("error", (error) => {
+  console.error(error);
+});
+
+// Set
+client.set("user_name", "mert", (error, message) => {
+  if (error) {
     console.error(error);
-});
-//set et
-client.set("user_name","mert", (error, message) => {
-    if(error){
-        console.error(error);
-    }
-    console.log("Message", message);
+  }
+  console.log("Message", message);
 });
 
-//get
-client.get("user_name","mert", (error, message) => {
-    if(error){
-        console.error(error);
-    }
-    console.log("Message", message);
+// Get
+client.get("user_name", (error, message) => {
+  if (error) {
+    console.error(error);
+  }
+  console.log("Message", message);
 });
 
-//delete
-client.get("user_name","mert", (error, message) => {
-    if(error){
-        console.error(error);
-    }
-    console.log("Delete?", message);
+// Delete
+client.del("user_name", (error, message) => {
+  if (error) {
+    console.error(error);
+  }
+  console.log("Delete?", message);
 });
 
-
-
-//exists
-client.exists("user_name","mert", (error, message) => {
-    if(error){
-        console.error(error);
-    }
-    console.log("Exists", message);
+// Exists
+client.exists("user_name", (error, message) => {
+  if (error) {
+    console.error(error);
+  }
+  console.log("Exists", message);
 });
 
-
-//append
-client.append("last_name","polat", (error, message) => {
-    if(error){
-        console.error(error);
-    }
-    console.log("Append", message);
-    client.get("last_name", (e, m) => {
-        console.log("Okunan",m);
-    });
+// Append
+client.append("last_name", "polat", (error, message) => {
+  if (error) {
+    console.error(error);
+  }
+  console.log("Append", message);
+  client.get("last_name", (err, value) => {
+    console.log("Okunan", value);
+  });
 });
-
 
 client.on("message", (channel, message) => {
-    console.log(`${channel} isimli kanala(kişiye) ${message} geldi..`);
-  });
-  
-  client.subscribe("mertpolat");
+  console.log(`Kanal: ${channel}, Mesaj: ${message}`);
+});
+
+client.subscribe("mertpolat");
+
+// Express uygulamasını dinle
+app.listen(3000, () => {
+  console.log("Sunucu çalışıyor...");
+});
